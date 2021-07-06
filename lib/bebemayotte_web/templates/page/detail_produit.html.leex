@@ -1,0 +1,50 @@
+<div class="product">
+    <div class="detail_produit">
+        <div class="sary_produit">
+            <%= if @produit.photolink == "#{@produit.id_produit}-0.JPG" do %>
+                <img src="<%= Routes.static_path(@socket, "/images/empty.png") %>" class="prod">
+            <% else %>
+                <img src="data:image/png;base64, <%= @produit.photolink %>" class="prod" />
+            <% end %>
+        </div>
+        <div class="title_produit">
+           <h1><%= @produit.title %></h1>
+           <br>
+           <h2 class="prix">€ <%= Decimal.round(@produit.price, 2) %></h2>
+           <br>
+           <div class="detail_produit">
+           <!-- <input type="text" phx-value-id="quantite" name="quantite" > -->
+           <div>
+             <table>
+               <tr>
+                 <td><button  phx-click="sub_quantite" phx-value-quantite="<%= @quantite %>" class="quantite_moins"></button></td>
+                 <td><%= @quantite %></td>
+                 <td><button phx-click="add_quantite" phx-value-quantite="<%= @quantite %>" class="quantite_plus"  phx-value-max="<%= Decimal.to_integer(@produit.stockmax) %>"></button></td>
+               </tr>
+             </table>
+           </div>
+             <div><button class="btn_panier" phx-click="add_panier" phx-value-quantite="<%= @quantite %>" phx-value-produit="<%= @produit.id_produit %>" phx-value-session="<%= @id_session %>"><i  class='fab panier '>&#xe057;</i></button></div>
+           </div>
+           <h3> <b>Catégories :</b> <%= @categorie_prod %>, <%= @souscategorie_prod %></h3>
+        </div>
+        <h2>Description</h2>
+
+    </div>
+    <div class="apparente">
+        <h2>Description</h2>
+        <h4><strong><%= @produit.title %></strong></h3>
+
+        <h2>Produits apparentés</h2>
+        <div class="article" >
+            <%= for apparent <- @apparentes do %>
+                <div class="produit">
+                    <a class="produit_a" href="/show_produit/<%= apparent.id_produit %>">
+                        <img src="data:image/png;base64, <%= apparent.photolink %>" href="/show_produit/<%= apparent.id_produit %>">
+                        <h3 class="detail"><%= apparent.title %></h3>
+                    </a>
+                </div>
+            <% end %>
+        </div>
+
+    </div>
+</div>

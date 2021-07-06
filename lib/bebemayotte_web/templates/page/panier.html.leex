@@ -1,0 +1,79 @@
+<div class="product">
+    <%= if @nb_ligne == 0 do %>
+        <div class="vide">
+            <img src="<%= Routes.static_path(@socket, "/images/shopping.png") %>"> <h3>Votre panier est actuellement vide.</h3>
+        </div>
+        <div class="bouton-retour">
+            <button type="submit" class="retour">
+                <a  href="/produit">Retour à la boutique</a>
+            </button>
+        </div>
+    <% else %>
+        <div id="grid">
+            <div id="item1">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ARTICLES</th>
+                            <th></th>
+                            <th></th>
+                            <th>QUANTITES</th>
+                            <th></th>
+                            <th>PRIX</th>
+                            <th>SUPPRIMER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%= for panier <- @paniers  do %>
+                            <%= for produit <- @produits do %>
+                                <%= if produit.id_produit == panier.id_produit do %>
+                                    <tr>
+                                        <td>
+                                            <%= if produit.photolink == "#{produit.id_produit}-0.JPG" do %>
+                                                <img src="<%= Routes.static_path(@socket, "/images/empty.png") %>" class="shop">
+                                            <% else %>
+                                                <img src="data:image/png;base64, <%= produit.photolink %>" class="shop" />
+                                            <% end %>
+                                        </td>
+                                        <td><p><a href="/show_produit/<%= produit.id_produit %>"><%= produit.title %></a></p></td>
+                                        <td><button phx-value-quantite="<%= panier.quantite %>" phx-value-id="<%= panier.id_panier %>" phx-click="sub_quantite" class="quantite_moins" phx-value-session="<%= @id_session %>"></button></td>
+                                        <td><%= panier.quantite %></td>
+                                        <td><button phx-value-quantite="<%= panier.quantite %>" phx-value-id="<%= panier.id_panier %>" phx-click="add_quantite" phx-value-max="<%= Decimal.to_integer(produit.stockmax) %>" class="quantite_plus" phx-value-session="<%= @id_session %>"></button></td>
+                                        <td>€<%= Float.round(Decimal.to_float(produit.price) * panier.quantite, 2) %></td>
+                                        <td><button class="effacer" phx-value-id="<%= panier.id_panier %>" phx-click="delete_panier" phx-value-session="<%= @id_session %>"> </button></td>
+                                    </tr>
+                                <% end %>
+                            <% end %>
+                        <% end %>
+                    </tbody>
+
+                </table>
+            </div>
+            <div id="item3">
+                <h3 class="text-center">
+                    Total
+                </h3>
+                <table>
+                    <tbody>
+                        <tr class="total">
+                            <td class="title-left">SOUS-TOTAL</td>
+                            <td>€<%= Float.round(@somme, 2) %></td>
+                        </tr>
+                        <tr class="total">
+                            <td class="title-left">REMISE DE 5%</td>
+                            <td>- €<%= Float.round((@somme * 5)/100, 2) %></td>
+                        </tr>
+                        <tr class="total">
+                            <td class="title-left">EXPEDITION</td>
+                            <td>Calculer les frais d'expédition</td>
+                        </tr>
+                        <tr class="total">
+                            <td class="title-left">TOTAL</td>
+                            <td>€<%= Float.round(@somme - ((@somme * 5)/100), 2) %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <% end %>
+</div>
